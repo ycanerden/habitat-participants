@@ -8,16 +8,6 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0d0d0d;
-    --surface: #141414;
-    --border: #222;
-    --accent: #c8f135;
-    --accent-dim: rgba(200, 241, 53, 0.12);
-    --text: #f0ede6;
-    --muted: #666;
-    --tag-bg: #1a1a1a;
-  }
-  :root.light {
     --bg: #f5f2eb;
     --surface: #ede9df;
     --border: #d8d3c8;
@@ -26,29 +16,6 @@
     --text: #1a1a16;
     --muted: #8a8578;
     --tag-bg: #eae6dd;
-  }
-  :root.light .idea-tag.has-idea {
-    background: rgba(58, 110, 0, 0.08);
-    color: #3a6e00;
-    border-color: rgba(58, 110, 0, 0.25);
-  }
-  :root.light .idea-tag.multiple {
-    background: rgba(30, 80, 180, 0.07);
-    color: #1e50b4;
-    border-color: rgba(30, 80, 180, 0.2);
-  }
-  :root.light .count-bar span {
-    color: #3a6e00;
-  }
-  :root.light .logo {
-    color: #3a6e00;
-  }
-  :root.light h1 em {
-    color: #3a6e00;
-  }
-  :root.light .theme-toggle {
-    border-color: var(--border);
-    color: var(--muted);
   }
   body {
     background: var(--bg);
@@ -245,17 +212,17 @@
     margin-bottom: 12px;
   }
   .idea-tag.has-idea {
-    background: var(--accent-dim);
-    color: var(--accent);
-    border: 1px solid rgba(200, 241, 53, 0.3);
+    background: rgba(58, 110, 0, 0.08);
+    color: #3a6e00;
+    border: 1px solid rgba(58, 110, 0, 0.25);
   }
   .idea-tag.multiple {
-    background: rgba(100, 160, 255, 0.1);
-    color: #8ab4ff;
-    border: 1px solid rgba(100, 160, 255, 0.2);
+    background: rgba(30, 80, 180, 0.07);
+    color: #1e50b4;
+    border: 1px solid rgba(30, 80, 180, 0.2);
   }
   .idea-tag.open {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--tag-bg);
     color: var(--muted);
     border: 1px solid var(--border);
   }
@@ -268,7 +235,7 @@
   }
   .idea-text {
     font-size: 12px;
-    color: #999;
+    color: var(--muted);
     line-height: 1.6;
     font-style: italic;
     border-left: 2px solid var(--border);
@@ -277,7 +244,7 @@
   }
   .no-idea-text {
     font-size: 11px;
-    color: #444;
+    color: var(--muted);
     margin-top: 4px;
   }
   /* Footer */
@@ -294,25 +261,6 @@
     align-items: center;
   }
   .hidden { display: none !important; }
-  .theme-toggle {
-    background: none;
-    border: 1px solid #333;
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .theme-toggle:hover {
-    color: var(--text);
-    border-color: var(--text);
-  }
   @media (max-width: 600px) {
     header, .filters, .count-bar, footer { padding-left: 24px; padding-right: 24px; }
     .grid { grid-template-columns: 1fr; }
@@ -339,7 +287,6 @@
   <button class="filter-btn" onclick="filter('idea', this)">Has an idea</button>
   <button class="filter-btn" onclick="filter('multiple', this)">Multiple ideas</button>
   <button class="filter-btn" onclick="filter('open', this)">Open to anything</button>
-  <button class="theme-toggle" onclick="toggleTheme(this)" style="margin-left: auto">☀ Light</button>
 </div>
 <div class="count-bar">
   Showing <span id="count">24</span> participants
@@ -567,10 +514,6 @@
   <span>Only participants who opted in are shown</span>
 </footer>
 <script>
-  function toggleTheme(btn) {
-    const isLight = document.documentElement.classList.toggle('light');
-    btn.textContent = isLight ? '☾ Dark' : '☀ Light';
-  }
   function filter(type, btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
