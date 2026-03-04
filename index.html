@@ -24,6 +24,36 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  /* Top nav */
+  .topnav {
+    position: relative;
+    z-index: 2;
+    padding: 14px 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topnav-brand {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .topnav-link {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .topnav-link:hover { color: var(--accent); }
+  @media (max-width: 600px) {
+    .topnav { padding-left: 24px; padding-right: 24px; }
+  }
   /* Noise overlay */
   body::before {
     content: '';
@@ -268,6 +298,10 @@
 </style>
 </head>
 <body>
+<nav class="topnav">
+  <a href="/" class="topnav-brand">[Habitat] Participants</a>
+  <a href="/past-events" class="topnav-link">Past events →</a>
+</nav>
 <header>
   <div>
     <div class="logo">[Habitat] ✦ Leuven</div>
