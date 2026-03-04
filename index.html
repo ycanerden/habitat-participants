@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habitat Leuven — Who's Coming</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --border: #222;
+    --accent: #c8f135;
+    --accent-dim: rgba(200, 241, 53, 0.12);
+    --text: #f0ede6;
+    --muted: #666;
+    --tag-bg: #1a1a1a;
+  }
+  :root.light {
+    --bg: #f5f2eb;
+    --surface: #ede9df;
+    --border: #d8d3c8;
+    --accent: #3a6e00;
+    --accent-dim: rgba(58, 110, 0, 0.08);
+    --text: #1a1a16;
+    --muted: #8a8578;
+    --tag-bg: #eae6dd;
+  }
+  :root.light .idea-tag.has-idea {
+    background: rgba(58, 110, 0, 0.08);
+    color: #3a6e00;
+    border-color: rgba(58, 110, 0, 0.25);
+  }
+  :root.light .idea-tag.multiple {
+    background: rgba(30, 80, 180, 0.07);
+    color: #1e50b4;
+    border-color: rgba(30, 80, 180, 0.2);
+  }
+  :root.light .count-bar span {
+    color: #3a6e00;
+  }
+  :root.light .logo {
+    color: #3a6e00;
+  }
+  :root.light h1 em {
+    color: #3a6e00;
+  }
+  :root.light .theme-toggle {
+    border-color: var(--border);
+    color: var(--muted);
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 60px 48px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 6vw, 80px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .header-meta {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.8;
+  }
+  .header-meta span {
+    display: block;
+  }
+  .header-meta strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .subhead {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-top: 16px;
+    text-transform: uppercase;
+  }
+  /* Filter bar */
+  .filters {
+    position: relative;
+    z-index: 1;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .filter-btn {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  /* Count */
+  .count-bar {
+    position: relative;
+    z-index: 1;
+    padding: 14px 48px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .count-bar span {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  /* Grid */
+  .grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    padding-top: 1px;
+  }
+  .card {
+    background: var(--bg);
+    padding: 28px 32px;
+    transition: background 0.15s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .card:hover {
+    background: var(--surface);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .linkedin-btn {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    transition: all 0.15s;
+  }
+  .linkedin-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .idea-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    margin-bottom: 12px;
+  }
+  .idea-tag.has-idea {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(200, 241, 53, 0.3);
+  }
+  .idea-tag.multiple {
+    background: rgba(100, 160, 255, 0.1);
+    color: #8ab4ff;
+    border: 1px solid rgba(100, 160, 255, 0.2);
+  }
+  .idea-tag.open {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .idea-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .idea-text {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.6;
+    font-style: italic;
+    border-left: 2px solid var(--border);
+    padding-left: 12px;
+    margin-top: 4px;
+  }
+  .no-idea-text {
+    font-size: 11px;
+    color: #444;
+    margin-top: 4px;
+  }
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hidden { display: none !important; }
+  .theme-toggle {
+    background: none;
+    border: 1px solid #333;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+  @media (max-width: 600px) {
+    header, .filters, .count-bar, footer { padding-left: 24px; padding-right: 24px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">Habitat ✦ Leuven</div>
+    <h1>Who's<br><em>coming</em></h1>
+    <p class="subhead">Connect before the evening starts</p>
+  </div>
+  <div class="header-meta">
+    <span>Event</span>
+    <span><strong>Habitat Evening — Leuven</strong></span>
+    <span style="margin-top:8px">Participants sharing info</span>
+    <span><strong>24 people</strong></span>
+  </div>
+</header>
+<div class="filters">
+  <span class="filter-label">Filter by</span>
+  <button class="filter-btn active" onclick="filter('all', this)">All</button>
+  <button class="filter-btn" onclick="filter('idea', this)">Has an idea</button>
+  <button class="filter-btn" onclick="filter('multiple', this)">Multiple ideas</button>
+  <button class="filter-btn" onclick="filter('open', this)">Open to anything</button>
+  <button class="theme-toggle" onclick="toggleTheme(this)" style="margin-left: auto">☀ Light</button>
+</div>
+<div class="count-bar">
+  Showing <span id="count">24</span> participants
+</div>
+<div class="grid" id="grid">
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">B</div>
+      <a href="https://linkedin.com/in/bavo-maes" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Bavo Maes</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">An AI-powered platform that helps teachers quickly create, customize, and manage assignments all in one place.</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">D</div>
+      <a href="https://linkedin.com/in/david-okechukwu-eruka" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">David Eruka</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/sébastienvanaverbeke" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Sébastien Vanaverbeke</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">M</div>
+      <a href="https://linkedin.com/in/mark-shevchenko-218149259" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Mark Shevchenko</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/saïd-el-hasmi-b330153ab" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Saïd El Hasmi</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">Improve train traction with a preventive, passive, and eco-friendly solution.</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">Y</div>
+      <a href="https://linkedin.com/in/yannick-dondeyne-24748b195" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Yannick Dondeyne</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">J</div>
+      <a href="https://linkedin.com/in/jeroen-bertels" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Jeroen Bertels</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/sebastiendecouvreur" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Sebastien De Couvreur</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/simon-de-schaetzen" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Simon De Schaetzen</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">J</div>
+      <a href="https://linkedin.com/in/joedelamore" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Joe Delamore</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">A video reasoning engine that understands sight and sound of every clip so users find the exact moment they're thinking of.</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">L</div>
+      <a href="https://linkedin.com/in/lanre-adetola0" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Lanre Adetola</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">A</div>
+      <a href="https://linkedin.com/in/advay-johary-50873b314" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Advay Johary</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">Geopolitics educational webapp for schools and daily news, integrated with AI and other systems.</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">D</div>
+      <a href="https://linkedin.com/in/daanvansimpsen" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Daan Vansimpsen</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/stan-ackermans-238574221" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Stan Ackermans</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">N</div>
+      <a href="https://linkedin.com/in/nicolas-gabriëls" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Nicolas Gabriëls</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">Multi-sided platform for waste commodities with automatic valuation of the material based on price and demand.</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">A</div>
+      <a href="https://linkedin.com/in/takyia" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Ariane Takyi</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="idea-text">End-to-end tender workspace for renewable energy + a platform matching online brands to in-store shelf space.</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/sajadalam" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Sajad Alam</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">A luxury travel app using AI to streamline mundane tasks while leaving room for the human personal touch.</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">C</div>
+      <a href="https://linkedin.com/in/casblockeel" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Cas Blockeel</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">K</div>
+      <a href="https://linkedin.com/in/kate-budzanowska" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Kate Budzanowska</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">L</div>
+      <a href="https://linkedin.com/in/lars-dewitte-442117248" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Lars Dewitte</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">An open-loop reusable packaging system that lowers deposit barriers by working directly with bank accounts — no app or subscription needed.</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">F</div>
+      <a href="https://linkedin.com/in/felix-van-kerschaver-715b23296" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Felix Van Kerschaver</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+  <div class="card" data-type="multiple">
+    <div class="card-top">
+      <div class="avatar">S</div>
+      <a href="https://linkedin.com/in/sofya-lukashevich" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Sofya Lukashevich</div>
+    <div class="idea-tag multiple"><span class="idea-dot"></span>Multiple ideas</div>
+    <div class="no-idea-text">Bringing several concepts to the table</div>
+  </div>
+  <div class="card" data-type="idea">
+    <div class="card-top">
+      <div class="avatar">A</div>
+      <a href="https://linkedin.com/in/ashwin-kumaar-murali-dharan-07a616153" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Ashwin Kumaar</div>
+    <div class="idea-tag has-idea"><span class="idea-dot"></span>Has an idea</div>
+    <div class="idea-text">Predictive platform for healthcare.</div>
+  </div>
+  <div class="card" data-type="open">
+    <div class="card-top">
+      <div class="avatar">O</div>
+      <a href="https://linkedin.com/in/ozan-yenersoy" target="_blank" class="linkedin-btn">LinkedIn ↗</a>
+    </div>
+    <div class="name">Ozan Yenersoy</div>
+    <div class="idea-tag open"><span class="idea-dot"></span>Open to anything</div>
+    <div class="no-idea-text">Looking to connect and explore</div>
+  </div>
+</div>
+<footer>
+  <span>Habitat Evening — Leuven 2026</span>
+  <span>Only participants who opted in are shown</span>
+</footer>
+<script>
+  function toggleTheme(btn) {
+    const isLight = document.documentElement.classList.toggle('light');
+    btn.textContent = isLight ? '☾ Dark' : '☀ Light';
+  }
+  function filter(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('.card');
+    let visible = 0;
+    cards.forEach(card => {
+      if (type === 'all' || card.dataset.type === type) {
+        card.classList.remove('hidden');
+        visible++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    document.getElementById('count').textContent = visible;
+  }
+</script>
+</body>
+</html>
